@@ -13,10 +13,10 @@ const validateJWT = async(req = request, res = response, next) => {
     }
 
     try {
-        const { uid } = jwt.verify(token, process.env.SECRET_KEY);
+        const { id } = jwt.verify(token, process.env.SECRET_KEY);
 
         // Read user from DB with uid
-        const user = await User.findById(uid);
+        const user = await User.findByPk(id);
         if (!user) {
             return res.status(401).json({
                 // user does not exist in DB
@@ -24,7 +24,7 @@ const validateJWT = async(req = request, res = response, next) => {
             });
         }
 
-        // Verify if user with uid has state: true
+        // Verify if user with id has state: true
         if (!user.state) {
             return res.status(401).json({
                 // user state: false

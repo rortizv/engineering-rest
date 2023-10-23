@@ -5,10 +5,4 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
     dialect: 'mysql'
 });
 
-// sequelize.authenticate().then(() => {
-//     console.log('Database successfully connected');
-// }).catch((error) => {
-//     console.error('Unable to connect to the database:', error);
-// });
-
 module.exports = sequelize;

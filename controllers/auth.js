@@ -33,10 +33,14 @@ const login = async (req, res = response) => {
         // Generate JWT
         const token = await generateJWT(user.id);
 
+        // Remove password from user
+        let userWithoutPassword = { ...user.toJSON() };
+        delete userWithoutPassword.password;
+
         res.json({
             msg: 'Login successfully',
             token,
-            user
+            userWithoutPassword
         });
     } catch (error) {
         console.log(error);

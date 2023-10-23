@@ -48,6 +48,9 @@ const createUser = async (req, res = response) => {
             password: hashedPassword
         });
 
+        // Show user in response without password
+        delete user.dataValues.password;
+
         res.status(201).json({
             msg: 'User created successfully',
             user,

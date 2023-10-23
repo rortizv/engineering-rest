@@ -2,8 +2,7 @@ const { Router } = require('express');
 const { check } = require('express-validator');
 
 // Middlewares
-const { validateFields } = require('../middlewares/validate-fields');
-const { validateJWT } = require('../middlewares/validate-jwt');
+const { validateFields, validateJWT } = require('../middlewares');
 
 // Helpers
 const { emailAlreadyExists, idExists } = require('../helpers/db-validators');
