@@ -4,11 +4,8 @@ const { check } = require('express-validator');
 // Middlewares
 const { validateFields } = require('../middlewares/validate-fields');
 
-// Helpers
-const { validateJWTonLoad } = require('../helpers/renew-jwt');
-
 // Controllers
-const { login } = require('../controllers/auth');
+const { login, validateJWT } = require('../controllers/auth');
 
 
 const router = Router();
@@ -21,6 +18,6 @@ router.post('/login', [
     validateFields
 ], login);
 
-router.post('/validate-token', validateJWTonLoad);
+router.post('/validate-token', validateJWT);
 
 module.exports = router;

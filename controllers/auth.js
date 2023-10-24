@@ -1,5 +1,6 @@
 const { response } = require('express');
 const bcryptjs = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { generateJWT } = require('../helpers/generate-jwt');
 
@@ -50,6 +51,46 @@ const login = async (req, res = response) => {
     }
 };
 
+const validateJWT = async (req, res = response) => {
+    const savedToken = req.body.token;
+    if (savedToken) {
+        // check if token is a valid token
+        try {
+            const { id } = jwt.verify(savedToken, process.env.SECRET_KEY);
+            // Read user from DB with uid
+            const user = await User.findByPk(id);
+            if (!user) {
+                return res.status(401).json({
+                    // user does not exist in DB
+                    msg: 'Invalid token'
+                });
+            }
+    
+            // Verify if user with id has state: true
+            if (!user.state) {
+                return res.status(401).json({
+                    // user state: false
+                    msg: 'Invalid token'
+                });
+            }
+    
+            req.user = user;
+
+            res.json({
+                user
+            });
+        } catch (error) {
+            console.log(error);
+            return res.status(401).json({
+                msg: 'Invalid token'
+            });
+        }
+    } else {
+        console.log("There's no token in local storage");
+    }
+};
+
 module.exports = {
-    login
+    login,
+    validateJWT
 };

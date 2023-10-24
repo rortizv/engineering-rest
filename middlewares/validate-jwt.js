@@ -5,6 +5,9 @@ const User = require('../models/user');
 
 const validateJWT = async(req = request, res = response, next) => {
     // Read token
+    if (req.body.token) {
+        req.headers['x-token'] = req.body.token;
+    }
     const token = req.header('x-token');
     if (!token) {
         return res.status(401).json({
@@ -33,8 +36,7 @@ const validateJWT = async(req = request, res = response, next) => {
         }
 
         req.user = user;
-
-        next();
+        next(req.user);
     } catch (error) {
         console.log(error);
         return res.status(401).json({
