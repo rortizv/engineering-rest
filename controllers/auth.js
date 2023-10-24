@@ -34,13 +34,13 @@ const login = async (req, res = response) => {
         const token = await generateJWT(user.id);
 
         // Remove password from user
-        let userWithoutPassword = { ...user.toJSON() };
-        delete userWithoutPassword.password;
+        let loggedUser = { ...user.toJSON() };
+        delete loggedUser.password;
 
         res.json({
             msg: 'Login successfully',
             token,
-            userWithoutPassword
+            loggedUser
         });
     } catch (error) {
         console.log(error);
