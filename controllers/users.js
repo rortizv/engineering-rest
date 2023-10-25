@@ -1,6 +1,7 @@
 const { response } = require('express');
 const bcryptjs = require('bcryptjs');
 const User = require('../models/user');
+const { generateJWT } = require('../helpers/generate-jwt');
 
 
 const getUsers = async (req, res = response) => {
@@ -9,7 +10,6 @@ const getUsers = async (req, res = response) => {
 
         // Find all users
         const users = await User.findAll({
-            where: { state: true },
             offset: Number(from),
             limit: Number(limit),
         });
@@ -24,7 +24,7 @@ const getUsers = async (req, res = response) => {
 
         res.status(200).json({
             total,
-            users,
+            users
         });
     } catch (error) {
         console.error(error);
@@ -48,11 +48,15 @@ const createUser = async (req, res = response) => {
             password: hashedPassword
         });
 
+        // generate jwt
+        const token = await generateJWT(user.id);
+
         // Show user in response without password
         delete user.dataValues.password;
 
         res.status(201).json({
             msg: 'User created successfully',
+            token,
             user,
         });
     } catch (error) {
@@ -112,11 +116,11 @@ const deleteUser = async (req, res = response) => {
     try {
         const { id } = req.params;
 
-        // Soft delete the user by changing the state
-        const user = await User.update({ state: false }, { where: { id } });
+        // Strong Delete the user by ID - user is destroyed from DB
+        const user = await User.destroy({ where: { id } });
 
         res.json({
-            msg: `User with ID ${id} was deleted successfully`
+            msg: 'User was permantently deleted'
         });
     } catch (error) {
         console.error(error);
@@ -125,10 +129,16 @@ const deleteUser = async (req, res = response) => {
 };
 
 
+const permanentDeleteUser = async (req, res = response) => {
+    
+}
+
+
 module.exports = {
     getUsers,
     createUser,
     updatePutUser,
     updatePatchUser,
-    deleteUser
+    deleteUser,
+    permanentDeleteUser
 }

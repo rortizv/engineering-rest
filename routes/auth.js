@@ -5,7 +5,7 @@ const { check } = require('express-validator');
 const { validateFields } = require('../middlewares/validate-fields');
 
 // Controllers
-const { login, validateJWT } = require('../controllers/auth');
+const { login, register, validateJWT } = require('../controllers/auth');
 
 
 const router = Router();
@@ -17,6 +17,14 @@ router.post('/login', [
     check('password', 'Password must be at least 6 characters').isLength({ min: 6 }).not(),
     validateFields
 ], login);
+
+router.post('/register', [
+    check('name', 'Name is required').not().isEmpty(),
+    check('email', 'Email is not valid').isEmail(),
+    check('password', 'Password must be at least 6 characters').isLength({ min: 6 }).not(),
+    check('password', 'Password is required').not().isEmpty(),
+    validateFields
+], register);
 
 router.post('/validate-token', validateJWT);
 

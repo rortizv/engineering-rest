@@ -51,6 +51,48 @@ const login = async (req, res = response) => {
     }
 };
 
+const register = async (req, res = response) => {
+    const { name, email, password } = req.body;
+
+    try {
+        // Verify if email exists
+        const user = await User.findOne({ where: { email } });
+        if (user) {
+            return res.status(400).json({
+                msg: 'Email already exists'
+            });
+        }
+
+        // Create user
+        const newUser = new User({ name, email, password });
+
+        // Encrypt password
+        const salt = bcryptjs.genSaltSync();
+        newUser.password = bcryptjs.hashSync(password, salt);
+
+        // Save user in DB
+        await newUser.save();
+
+        // Generate JWT
+        const token = await generateJWT(newUser.id);
+
+        // Remove password from user
+        let loggedUser = { ...newUser.toJSON() };
+        delete loggedUser.password;
+
+        res.json({
+            msg: 'User created successfully',
+            token,
+            loggedUser
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            msg: 'Something went wrong'
+        });
+    }
+}
+
 const validateJWT = async (req, res = response) => {
     const savedToken = req.body.token;
     if (savedToken) {
@@ -92,5 +134,6 @@ const validateJWT = async (req, res = response) => {
 
 module.exports = {
     login,
+    register,
     validateJWT
 };
