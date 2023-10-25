@@ -21,3 +21,7 @@ Steps to configure and run:
 7. Use Node 18.18.2
 8. Run ```npm i```
 9. Run app with ```npm start```
+
+Testing api routes with Postman:
+You will find file: ```engineering-rest.postman_collection.json```
+Load it in Postman and you can test all api services.
